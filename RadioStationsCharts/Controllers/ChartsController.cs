@@ -38,5 +38,26 @@ namespace RadioStationsCharts.Controllers
             
             return list;
         }
+        [HttpGet]
+        [Route("eska")]
+        public ChartsScraping GetEskaCharts()
+        {
+            ChartsScraping list = new ChartsScraping();
+            list.Charts = new List<Charts>();
+            list.Station = "Radio Eska";
+            list.ChartsName = "Gorąca 20";
+            DataTable charts = db.ExecProcedureToDatatable("GetEskaCharts");
+
+            foreach (DataRow row in charts.Rows)
+            {
+                Charts field = new Charts();
+                field.Position = Convert.ToInt32(row["Number"]);
+                field.Artist = row["Artist"].ToString();
+                field.Title = row["Title"].ToString();
+                list.Charts.Add(field);
+            }
+
+            return list;
+        }
     }
 }

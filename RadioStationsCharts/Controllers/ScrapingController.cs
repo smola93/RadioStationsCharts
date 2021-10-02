@@ -64,7 +64,7 @@ namespace RadioStationsCharts.Controllers
                 string url = "https://www.eska.pl/goraca20/";
                 charts = ParseEskaHtmlToDataTable(url, charts);
 
-                //db.ExecDatatableProcedure("UpdateEskaCharts", charts);
+                db.ExecDatatableProcedure("UpdateEskaCharts", charts);
 
                 return "Ok";
             }
@@ -96,7 +96,10 @@ namespace RadioStationsCharts.Controllers
                 row["Artist"] = chartsDetails[0].InnerText;
                 row["Title"] = chartsDetails[1].InnerText;
                 dt.Rows.Add(row);
-
+                if (number == 20)
+                {
+                    break;
+                }
             }
 
             return dt;
