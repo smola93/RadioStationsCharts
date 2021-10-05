@@ -59,5 +59,26 @@ namespace RadioStationsCharts.Controllers
 
             return list;
         }
+        [HttpGet]
+        [Route("radio-zet")]
+        public ChartsScraping GetRadioZetCharts()
+        {
+            ChartsScraping list = new ChartsScraping();
+            list.Charts = new List<Charts>();
+            list.Station = "Radio Zet";
+            list.ChartsName = "Lista Przebojów Radia Zet";
+            DataTable charts = db.ExecProcedureToDatatable("GetRadioZetCharts");
+
+            foreach (DataRow row in charts.Rows)
+            {
+                Charts field = new Charts();
+                field.Position = Convert.ToInt32(row["Number"]);
+                field.Artist = row["Artist"].ToString();
+                field.Title = row["Title"].ToString();
+                list.Charts.Add(field);
+            }
+
+            return list;
+        }
     }
 }

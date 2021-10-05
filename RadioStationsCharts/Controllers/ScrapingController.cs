@@ -73,6 +73,30 @@ namespace RadioStationsCharts.Controllers
                 return "Error: " + ex.Message;
             }
         }
+
+        [HttpGet]
+        [Route("scrap-radio-zet")]
+        public string ScrapRadioZetCharts()
+        {
+            try
+            {
+                DataTable charts = new DataTable();
+                charts.Columns.Add("Number");
+                charts.Columns.Add("Artist");
+                charts.Columns.Add("Title");
+
+                string url = "https://www.radiozet.pl/Radio/Lista-przebojow";
+                charts = ParseRadioZetHtmlToDataTable(url, charts);
+
+                db.ExecDatatableProcedure("UpdateRadioZetCharts", charts);
+
+                return "Ok";
+            }
+            catch (Exception ex)
+            {
+                return "Error: " + ex.Message;
+            }
+        }
         private DataTable ParseRmfHtmlToDataTable(string url, DataTable dt)
         {
             int number = 0;
@@ -139,6 +163,35 @@ namespace RadioStationsCharts.Controllers
                     dt.Rows.Add(row);
                 }
                 if (number == 20)
+                {
+                    break;
+                }
+            }
+
+            return dt;
+
+        }
+        private DataTable ParseRadioZetHtmlToDataTable(string url, DataTable dt)
+        {
+            int number = 0;
+
+            WebClient client = new WebClient();
+            MemoryStream ms = new MemoryStream(client.DownloadData(url));
+
+            HtmlDocument htmlDoc = new HtmlDocument();
+            htmlDoc.Load(ms, Encoding.UTF8);
+            var artists = htmlDoc.DocumentNode.SelectNodes("//div[contains(@class, 'artist-track')]");
+            var titles = htmlDoc.DocumentNode.SelectNodes("//div[contains(@class, 'title-track')]");
+
+            foreach (HtmlNode artist in artists)
+            {
+                number++;
+                DataRow row = dt.NewRow();
+                row["Number"] = number;
+                row["Artist"] = artist.InnerText.Replace("\n", "");
+                row["Title"] = titles[number - 1].InnerText.Replace("\n", "");
+                dt.Rows.Add(row);
+                if (number == 30)
                 {
                     break;
                 }
