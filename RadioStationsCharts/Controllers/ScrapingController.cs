@@ -62,7 +62,7 @@ namespace RadioStationsCharts.Controllers
                 charts.Columns.Add("Title");
 
                 string url = "https://www.eska.pl/goraca20/";
-                charts = ParseEskaHtmlToDataTable(url, charts);
+                charts = ParseEskaAndVoxHtmlToDataTable(url, charts);
 
                 db.ExecDatatableProcedure("UpdateEskaCharts", charts);
 
@@ -89,6 +89,29 @@ namespace RadioStationsCharts.Controllers
                 charts = ParseRadioZetHtmlToDataTable(url, charts);
 
                 db.ExecDatatableProcedure("UpdateRadioZetCharts", charts);
+
+                return "Ok";
+            }
+            catch (Exception ex)
+            {
+                return "Error: " + ex.Message;
+            }
+        }
+        [HttpGet]
+        [Route("scrap-vox-fm")]
+        public string ScrapVoxFmCharts()
+        {
+            try
+            {
+                DataTable charts = new DataTable();
+                charts.Columns.Add("Number");
+                charts.Columns.Add("Artist");
+                charts.Columns.Add("Title");
+
+                string url = "https://www.voxfm.pl/bestlista/";
+                charts = ParseEskaAndVoxHtmlToDataTable(url, charts);
+
+                db.ExecDatatableProcedure("UpdateVoxFmCharts", charts);
 
                 return "Ok";
             }
@@ -129,7 +152,7 @@ namespace RadioStationsCharts.Controllers
             return dt;
 
         }
-        private DataTable ParseEskaHtmlToDataTable(string url, DataTable dt)
+        private DataTable ParseEskaAndVoxHtmlToDataTable(string url, DataTable dt)
         {
             int number = 0;
 
