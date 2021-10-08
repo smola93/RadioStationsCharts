@@ -120,6 +120,29 @@ namespace RadioStationsCharts.Controllers
                 return "Error: " + ex.Message;
             }
         }
+        [HttpGet]
+        [Route("scrap-polskie-radio-1")]
+        public string ScrapPolskieRadio1Charts()
+        {
+            try
+            {
+                DataTable charts = new DataTable();
+                charts.Columns.Add("Number");
+                charts.Columns.Add("Artist");
+                charts.Columns.Add("Title");
+
+                string url = "http://ppr1.polskieradio.pl/";
+                charts = ParsePolskieRadio1HtmlToDataTable(url, charts);
+
+                db.ExecDatatableProcedure("UpdatePolskieRadio1Charts", charts);
+
+                return "Ok";
+            }
+            catch (Exception ex)
+            {
+                return "Error: " + ex.Message;
+            }
+        }
         private DataTable ParseRmfHtmlToDataTable(string url, DataTable dt)
         {
             int number = 0;
@@ -218,6 +241,31 @@ namespace RadioStationsCharts.Controllers
                 {
                     break;
                 }
+            }
+
+            return dt;
+
+        }
+        private DataTable ParsePolskieRadio1HtmlToDataTable(string url, DataTable dt)
+        {
+            int number = 0;
+
+            WebClient client = new WebClient();
+            MemoryStream ms = new MemoryStream(client.DownloadData(url));
+
+            HtmlDocument htmlDoc = new HtmlDocument();
+            htmlDoc.Load(ms, Encoding.UTF8);
+            var artists = htmlDoc.DocumentNode.SelectNodes("//span[contains(@class, 'artist')]");
+            var titles = htmlDoc.DocumentNode.SelectNodes("//span[contains(@class, 'title')]");
+
+            foreach (HtmlNode artist in artists)
+            {
+                number++;
+                DataRow row = dt.NewRow();
+                row["Number"] = number;
+                row["Artist"] = artist.InnerText.Replace("\n", "");
+                row["Title"] = titles[number - 1].InnerText.Replace("\n", "");
+                dt.Rows.Add(row);
             }
 
             return dt;
