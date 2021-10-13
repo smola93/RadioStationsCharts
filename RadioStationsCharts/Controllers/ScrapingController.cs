@@ -13,6 +13,8 @@ using System.IO;
 using System.Data;
 using Microsoft.Extensions.Configuration;
 using System.Web;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
 
 namespace RadioStationsCharts.Controllers
 {
@@ -143,6 +145,29 @@ namespace RadioStationsCharts.Controllers
                 return "Error: " + ex.Message;
             }
         }
+        [HttpGet]
+        [Route("scrap-trojka")]
+        public string ScrapTrojkaCharts()
+        {
+            try
+            {
+                DataTable charts = new DataTable();
+                charts.Columns.Add("Number");
+                charts.Columns.Add("Artist");
+                charts.Columns.Add("Title");
+
+                string url = "https://lp3.polskieradio.pl/";
+                charts = ParseTrojkaHtmlToDataTable(url, charts);
+
+                //db.ExecDatatableProcedure("UpdateTrojkaCharts", charts);
+
+                return "Ok";
+            }
+            catch (Exception ex)
+            {
+                return "Error: " + ex.Message;
+            }
+        }
         private DataTable ParseRmfHtmlToDataTable(string url, DataTable dt)
         {
             int number = 0;
@@ -265,6 +290,45 @@ namespace RadioStationsCharts.Controllers
                 row["Number"] = number;
                 row["Artist"] = artist.InnerText.Replace("\n", "");
                 row["Title"] = titles[number - 1].InnerText.Replace("\n", "");
+                dt.Rows.Add(row);
+            }
+
+            return dt;
+
+        }
+        private DataTable ParseTrojkaHtmlToDataTable(string url, DataTable dt)
+        {
+            int number = 0;
+
+            var options = new ChromeOptions()
+            {
+                BinaryLocation = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+            };
+
+            options.AddArguments(new List<string>() { "headless", "disable-gpu" });
+            var browser = new ChromeDriver(options);
+            browser.Navigate().GoToUrl(url);
+
+
+            //WebClient client = new WebClient();
+            //MemoryStream ms = new MemoryStream(client.DownloadData(url));
+
+            //HtmlDocument htmlDoc = new HtmlDocument();
+            //htmlDoc.Load(ms, Encoding.UTF8);
+
+            var firstPositionArtists = browser.FindElementsByClassName("list-first-element__info-artist");
+            var firstPositionTitle = browser.FindElementsByClassName("list-first-element__info-title");
+
+            var artists = browser.FindElementsByClassName("list-rest__info-artist");
+            var titles = browser.FindElementsByClassName("list-rest__info-title");
+
+            foreach (HtmlNode artist in artists)
+            {
+                number++;
+                DataRow row = dt.NewRow();
+                row["Number"] = number;
+                row["Artist"] = artist.InnerText.Replace("\n", "");
+                row["Title"] = titles[number - 1];
                 dt.Rows.Add(row);
             }
 
