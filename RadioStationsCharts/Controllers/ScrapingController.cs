@@ -304,35 +304,54 @@ namespace RadioStationsCharts.Controllers
             {
                 BinaryLocation = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
             };
-
             options.AddArguments(new List<string>() { "headless", "disable-gpu" });
             var browser = new ChromeDriver(options);
-            browser.Navigate().GoToUrl(url);
-
-
-            //WebClient client = new WebClient();
-            //MemoryStream ms = new MemoryStream(client.DownloadData(url));
-
-            //HtmlDocument htmlDoc = new HtmlDocument();
-            //htmlDoc.Load(ms, Encoding.UTF8);
-
-            var firstPositionArtists = browser.FindElementsByClassName("list-first-element__info-artist");
-            var firstPositionTitle = browser.FindElementsByClassName("list-first-element__info-title");
-
-            var artists = browser.FindElementsByClassName("list-rest__info-artist");
-            var titles = browser.FindElementsByClassName("list-rest__info-title");
-
-            foreach (HtmlNode artist in artists)
+            
+            try
             {
-                number++;
-                DataRow row = dt.NewRow();
-                row["Number"] = number;
-                row["Artist"] = artist.InnerText.Replace("\n", "");
-                row["Title"] = titles[number - 1];
-                dt.Rows.Add(row);
-            }
+                browser.Navigate().GoToUrl(url);
 
-            return dt;
+                IWebElement element = browser.FindElement(By.ClassName("select-button"));
+                IJavaScriptExecutor js = browser;
+                js.ExecuteScript("var evt = document.createEvent('MouseEvents');" + 
+                    "evt.initMouseEvent('click',true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0,null);" 
+                    + "arguments[0].dispatchEvent(evt);", element);
+
+                var firstPositionArtist = browser.FindElementsByClassName("list-first-element__info-artist");
+                var firstPositionTitle = browser.FindElementsByClassName("list-first-element__info-title");
+                var artists = browser.FindElementsByClassName("list-rest__info-artist");
+                var titles = browser.FindElementsByClassName("list-rest__info-title");
+
+                number++;
+                DataRow firstRow = dt.NewRow();
+                firstRow["Number"] = number;
+                firstRow["Artist"] = firstPositionArtist[0].Text;
+                firstRow["Title"] = firstPositionTitle[0].Text;
+                dt.Rows.Add(firstRow);
+
+                foreach (var artist in artists)
+                {
+                    number++;
+                    DataRow row = dt.NewRow();
+                    row["Number"] = number;
+                    row["Artist"] = artist.Text;
+                    row["Title"] = titles[number - 2].Text;
+                    dt.Rows.Add(row);
+                    if (number == 30)
+                    {
+                        break;
+                    }
+                }
+                
+                browser.Quit();
+                
+                return dt;
+            }
+            catch (Exception)
+            {
+                browser.Quit();
+                throw;
+            }
 
         }
         //Do usuniecia?
