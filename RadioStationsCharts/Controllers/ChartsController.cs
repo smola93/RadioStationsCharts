@@ -122,5 +122,26 @@ namespace RadioStationsCharts.Controllers
 
             return list;
         }
+        [HttpGet]
+        [Route("trojka")]
+        public ChartsScraping GetTrojkaCharts()
+        {
+            ChartsScraping list = new ChartsScraping();
+            list.Charts = new List<Charts>();
+            list.Station = "Trójka Polskie Radio";
+            list.ChartsName = "Lista przebojów programu 3";
+            DataTable charts = db.ExecProcedureToDatatable("GetTrojkaCharts");
+
+            foreach (DataRow row in charts.Rows)
+            {
+                Charts field = new Charts();
+                field.Position = Convert.ToInt32(row["Number"]);
+                field.Artist = row["Artist"].ToString();
+                field.Title = row["Title"].ToString();
+                list.Charts.Add(field);
+            }
+
+            return list;
+        }
     }
 }

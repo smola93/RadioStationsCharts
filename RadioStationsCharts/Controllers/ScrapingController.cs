@@ -159,7 +159,7 @@ namespace RadioStationsCharts.Controllers
                 string url = "https://lp3.polskieradio.pl/";
                 charts = ParseTrojkaHtmlToDataTable(url, charts);
 
-                //db.ExecDatatableProcedure("UpdateTrojkaCharts", charts);
+                db.ExecDatatableProcedure("UpdateTrojkaCharts", charts);
 
                 return "Ok";
             }
