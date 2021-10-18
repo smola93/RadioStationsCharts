@@ -15,11 +15,13 @@ using Microsoft.Extensions.Configuration;
 using System.Web;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using RadioStationsCharts.Attributes;
 
 namespace RadioStationsCharts.Controllers
 {
     [Route("scraping")]
     [ApiController]
+    [ApiKey]
     public class ScrapingController : ControllerBase
     {
         readonly DatabaseAccess db;

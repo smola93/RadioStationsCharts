@@ -6,11 +6,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using RadioStationsCharts.Attributes;
 
 namespace RadioStationsCharts.Controllers
 {
     [Route("charts")]
     [ApiController]
+    [ApiKey]
     public class ChartsController : ControllerBase
     {
         readonly DatabaseAccess db;
@@ -128,8 +130,8 @@ namespace RadioStationsCharts.Controllers
         {
             ChartsScraping list = new ChartsScraping();
             list.Charts = new List<Charts>();
-            list.Station = "Trójka Polskie Radio";
-            list.ChartsName = "Lista przebojów programu 3";
+            list.Station = "Trojka Polskie Radio";
+            list.ChartsName = "Lista Przebojów Programu 3";
             DataTable charts = db.ExecProcedureToDatatable("GetTrojkaCharts");
 
             foreach (DataRow row in charts.Rows)
