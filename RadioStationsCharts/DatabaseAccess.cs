@@ -69,5 +69,24 @@ namespace RadioStationsCharts
                 throw;
             }
         }
+        public void ExecProcedureWithParameters(string procedure, string[] parameters)
+        {
+            try
+            {
+                SqlCommand cmd = new SqlCommand(procedure, connection);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                for (int i = 0; i >= parameters.Length; i++)
+                {
+                    cmd.Parameters.Add(parameters[i]);
+                }
+
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

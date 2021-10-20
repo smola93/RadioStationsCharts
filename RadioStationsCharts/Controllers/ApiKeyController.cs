@@ -1,10 +1,16 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Configuration;
 using RadioStationsCharts.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
+using System.Net;
+using System.Net.Mail;
+using System.Net.Mime;
 
 namespace RadioStationsCharts.Controllers
 {
@@ -12,17 +18,87 @@ namespace RadioStationsCharts.Controllers
     [ApiController]
     public class ApiKeyController : ControllerBase
     {
+        private readonly IConfiguration Configuration;
+        readonly DatabaseAccess db;
+        public ApiKeyController(IConfiguration config)
+        {
+            db = new DatabaseAccess(config);
+        }
+
         [HttpPost]
         public string RegisterAndGetApiKey(ApiKeyRequest request)
         {
             try
             {
+                bool isValidEmail = IsValidEmail(request.Email);
 
-                return "Ok";
+                if (isValidEmail)
+                {
+                    string apiKey = GenerateApiKey();
+                    string[] procedureParams = { request.Name, request.Email, apiKey };
+                    db.ExecProcedureWithParameters("InsertUserDetails", procedureParams);
+                    SendEmailWithApiKey(request.Email, apiKey);
+                }
+                else
+                {
+                    return "E-mail address is not valid";
+                }
+
+                return "ApiKey was generated successful. Check your E-mail to find it!";
             }
             catch (Exception ex)
             {
                 return "Error: " + ex.Message;
+            }
+        }
+        private string GenerateApiKey()
+        {
+            var key = new byte[32];
+            using (var generator = RandomNumberGenerator.Create())
+                generator.GetBytes(key);
+            string apiKey = Convert.ToBase64String(key);
+            return apiKey;
+        }
+        private bool IsValidEmail(string email)
+        {
+            if (email.Trim().EndsWith("."))
+            {
+                return false;
+            }
+            try
+            {
+                var addr = new MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        private void CheckForEmailAndNameDuplication(string email, string name)
+        {
+            //To implement for check is email or name isn't exist already.
+            throw new NotImplementedException();
+        }
+        private void SendEmailWithApiKey(string newUserEmail, string ApiKey)
+        {
+            string emailPass = Configuration.GetSection("MailPass").Value;
+            string message = "Your secret ApiKey for RadioStationsCharts Is: " + ApiKey;
+            try
+            {
+                var smtpClient = new SmtpClient("smtp.gmail.com")
+                {
+                    Port = 587,
+                    Credentials = new NetworkCredential("radiostationscharts@gmail.com", emailPass),
+                    EnableSsl = true,
+                };
+
+                smtpClient.Send("radiostationscharts@gmail.com", newUserEmail, "Your ApiKey For RadioStationsCharts API!", message);
+            }
+            catch (SmtpException ex)
+            {
+                throw new ApplicationException
+                  ("SmtpException has occured: " + ex.Message);
             }
         }
     }
