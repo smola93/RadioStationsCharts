@@ -18,10 +18,11 @@ namespace RadioStationsCharts.Controllers
     [ApiController]
     public class ApiKeyController : ControllerBase
     {
-        private readonly IConfiguration Configuration;
         readonly DatabaseAccess db;
+        private readonly IConfiguration Configuration;
         public ApiKeyController(IConfiguration config)
         {
+            Configuration = config;
             db = new DatabaseAccess(config);
         }
 

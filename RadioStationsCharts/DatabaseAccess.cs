@@ -2,9 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Data.SqlClient;
 
 namespace RadioStationsCharts
 {
@@ -73,15 +73,18 @@ namespace RadioStationsCharts
         {
             try
             {
+                string connetionString = Configuration.GetSection("ConnectionStrings").GetSection("DBConnString").Value;
+                connection = new SqlConnection(connetionString);
+                connection.Open();
                 SqlCommand cmd = new SqlCommand(procedure, connection);
                 cmd.CommandType = CommandType.StoredProcedure;
 
-                for (int i = 0; i >= parameters.Length; i++)
-                {
-                    cmd.Parameters.Add(parameters[i]);
-                }
+                cmd.Parameters.AddWithValue("@Name", parameters[0]);
+                cmd.Parameters.AddWithValue("@Email", parameters[1]);
+                cmd.Parameters.AddWithValue("@ApiKey", parameters[2]);
 
                 cmd.ExecuteNonQuery();
+                connection.Close();
             }
             catch (Exception)
             {
