@@ -11,6 +11,7 @@ namespace RadioStationsCharts.Attributes
     public class ApiKeyAttribute : Attribute, IAsyncActionFilter
     {
         private const string APIKEYNAME = "ApiKey";
+        
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             if (!context.HttpContext.Request.Headers.TryGetValue(APIKEYNAME, out var extractedApiKey))
@@ -23,11 +24,12 @@ namespace RadioStationsCharts.Attributes
                 return;
             }
 
-            var appSettings = context.HttpContext.RequestServices.GetRequiredService<IConfiguration>();
+            //var appSettings = context.HttpContext.RequestServices.GetRequiredService<IConfiguration>();
+            DatabaseAccess db = new DatabaseAccess(context.HttpContext.RequestServices.GetRequiredService<IConfiguration>());
 
-            var apiKey = appSettings.GetValue<string>(APIKEYNAME);
+            var apiKey = db.CheckApiKeyInDatabase(extractedApiKey);
 
-            if (!apiKey.Equals(extractedApiKey))
+            if (string.IsNullOrEmpty(apiKey) || !apiKey.Equals(extractedApiKey))
             {
                 context.Result = new ContentResult()
                 {

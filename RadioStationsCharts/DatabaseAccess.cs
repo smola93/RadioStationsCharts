@@ -91,5 +91,29 @@ namespace RadioStationsCharts
                 throw;
             }
         }
+        public string CheckApiKeyInDatabase(string apiKey)
+        {
+            try
+            {
+                object obj;
+                string connetionString = Configuration.GetSection("ConnectionStrings").GetSection("DBConnString").Value;
+                connection = new SqlConnection(connetionString);
+                connection.Open();
+                SqlCommand cmd = new SqlCommand("CheckApiKey", connection);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@ApiKey", apiKey);
+
+                obj = cmd.ExecuteScalar();
+                string key = (string)obj;
+                connection.Close();
+
+                return key;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

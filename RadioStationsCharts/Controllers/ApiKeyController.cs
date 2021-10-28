@@ -36,6 +36,7 @@ namespace RadioStationsCharts.Controllers
                 if (isValidEmail)
                 {
                     string apiKey = GenerateApiKey();
+                    CheckForEmailAndNameDuplication(request.Name, request.Email, apiKey);
                     string[] procedureParams = { request.Name, request.Email, apiKey };
                     db.ExecProcedureWithParameters("InsertUserDetails", procedureParams);
                     SendEmailWithApiKey(request.Email, apiKey);
@@ -76,10 +77,11 @@ namespace RadioStationsCharts.Controllers
                 return false;
             }
         }
-        private void CheckForEmailAndNameDuplication(string email, string name)
+        private void CheckForEmailAndNameDuplication(string name, string email, string apiKey)
         {
-            //To implement for check is email or name isn't exist already.
-            throw new NotImplementedException();
+            string[] procedureParams = { name, email, apiKey };
+            db.ExecProcedureWithParameters("CheckForDuplication", procedureParams);
+
         }
         private void SendEmailWithApiKey(string newUserEmail, string ApiKey)
         {
