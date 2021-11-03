@@ -5,6 +5,10 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace RadioStationsCharts
 {
@@ -114,6 +118,61 @@ namespace RadioStationsCharts
             {
                 throw;
             }
+        }
+        public async void LogInDetailsToDatabase (HttpContext context)
+        {
+            ConnectionInfo conn = context.Connection;
+            HttpRequest request = context.Request;
+            HttpResponse response = context.Response;
+            
+            string remoteIpAddress = conn.RemoteIpAddress.ToString();
+            string method = request.Method;
+            string headers = string.Join(", ", request.Headers);
+            string host = request.Headers["Host"];
+            string date = DateTime.Now.ToString();
+            
+            string body = "";
+            if (method.Equals("POST"))
+            {
+                request.EnableBuffering();
+                request.Body.Seek(0, SeekOrigin.Begin);
+                using (StreamReader stream = new StreamReader(request.Body))
+                {
+                    body = await stream.ReadToEndAsync();
+                }
+            }
+
+            int code = response.StatusCode;
+            string responseBody;
+            using (StreamReader stream = new StreamReader(response.Body))
+            {
+                responseBody = await stream.ReadToEndAsync();
+            }
+
+            string connetionString = Configuration.GetSection("ConnectionStrings").GetSection("DBConnString").Value;
+            connection = new SqlConnection(connetionString);
+            connection.Open();
+            SqlCommand cmd = new SqlCommand("NazwaProckiDoLogowaniaDanych", connection);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@IP", remoteIpAddress);
+            cmd.Parameters.AddWithValue("@HttpMethod", method);
+            cmd.Parameters.AddWithValue("@Headers", headers);
+            cmd.Parameters.AddWithValue("@HostName", host);
+            cmd.Parameters.AddWithValue("@CallDate", date);
+            if (method.Equals("POST"))
+            {
+                cmd.Parameters.AddWithValue("@RequestBody", body);
+            }
+            else
+            {
+                cmd.Parameters.AddWithValue("@RequestBody", "GET Method");
+            }
+            cmd.Parameters.AddWithValue("@ResponseBody", responseBody);
+            cmd.Parameters.AddWithValue("@StatusCode", code);
+
+            cmd.ExecuteNonQuery();
+            connection.Close();
         }
     }
 }

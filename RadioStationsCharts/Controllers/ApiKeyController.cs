@@ -11,11 +11,13 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
+using RadioStationsCharts.Attributes;
 
 namespace RadioStationsCharts.Controllers
 {
     [Route("register")]
     [ApiController]
+    [AllowGetResponseBody]
     public class ApiKeyController : ControllerBase
     {
         readonly DatabaseAccess db;
@@ -29,6 +31,7 @@ namespace RadioStationsCharts.Controllers
         [HttpPost]
         public string RegisterAndGetApiKey(ApiKeyRequest request)
         {
+            db.LogInDetailsToDatabase(HttpContext);
             try
             {
                 bool isValidEmail = IsValidEmail(request.Email);
