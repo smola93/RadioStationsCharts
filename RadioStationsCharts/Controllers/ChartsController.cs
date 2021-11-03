@@ -23,7 +23,7 @@ namespace RadioStationsCharts.Controllers
         [HttpGet]
         [Route("rmf")]
         public ChartsScraping GetRmfFmCharts() {
-            db.LogInDetailsToDatabase(HttpContext);
+            db.LogInDetailsToDatabaseAsync(HttpContext);
             ChartsScraping list = new ChartsScraping();
             list.Charts = new List<Charts>();
             list.Station = "Rmf FM";

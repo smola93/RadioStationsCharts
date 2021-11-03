@@ -31,9 +31,10 @@ namespace RadioStationsCharts.Controllers
         [HttpPost]
         public string RegisterAndGetApiKey(ApiKeyRequest request)
         {
-            db.LogInDetailsToDatabase(HttpContext);
             try
             {
+                db.LogInDetailsToDatabaseAsync(HttpContext);
+
                 bool isValidEmail = IsValidEmail(request.Email);
 
                 if (isValidEmail)

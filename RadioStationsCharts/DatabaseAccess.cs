@@ -119,18 +119,32 @@ namespace RadioStationsCharts
                 throw;
             }
         }
-        public async void LogInDetailsToDatabase (HttpContext context)
+        public void LogInDetailsToDatabaseAsync(HttpContext context)
+        {
+            try
+            {
+                var task = PrepareDataForLoggingToDbAsync(context);
+                string[] parameters = task.Result;
+                task.Wait();
+                ExecuteLoggingInToDb(parameters);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        private async Task<string[]> PrepareDataForLoggingToDbAsync(HttpContext context)
         {
             ConnectionInfo conn = context.Connection;
             HttpRequest request = context.Request;
             HttpResponse response = context.Response;
-            
+
             string remoteIpAddress = conn.RemoteIpAddress.ToString();
             string method = request.Method;
             string headers = string.Join(", ", request.Headers);
             string host = request.Headers["Host"];
             string date = DateTime.Now.ToString();
-            
+
             string body = "";
             if (method.Equals("POST"))
             {
@@ -142,34 +156,40 @@ namespace RadioStationsCharts
                 }
             }
 
-            int code = response.StatusCode;
+            string code = response.StatusCode.ToString();
             string responseBody;
             using (StreamReader stream = new StreamReader(response.Body))
             {
                 responseBody = await stream.ReadToEndAsync();
             }
 
+            string[] parameters = { remoteIpAddress, method, headers, host, date, body, responseBody, code };
+
+            return parameters;
+        }
+        private void ExecuteLoggingInToDb (string[] parameters)
+        {
             string connetionString = Configuration.GetSection("ConnectionStrings").GetSection("DBConnString").Value;
             connection = new SqlConnection(connetionString);
             connection.Open();
             SqlCommand cmd = new SqlCommand("NazwaProckiDoLogowaniaDanych", connection);
             cmd.CommandType = CommandType.StoredProcedure;
 
-            cmd.Parameters.AddWithValue("@IP", remoteIpAddress);
-            cmd.Parameters.AddWithValue("@HttpMethod", method);
-            cmd.Parameters.AddWithValue("@Headers", headers);
-            cmd.Parameters.AddWithValue("@HostName", host);
-            cmd.Parameters.AddWithValue("@CallDate", date);
-            if (method.Equals("POST"))
+            cmd.Parameters.AddWithValue("@IP", parameters[0]);
+            cmd.Parameters.AddWithValue("@HttpMethod", parameters[1]);
+            cmd.Parameters.AddWithValue("@Headers", parameters[2]);
+            cmd.Parameters.AddWithValue("@HostName", parameters[3]);
+            cmd.Parameters.AddWithValue("@CallDate", parameters[4]);
+            if (parameters[1].Equals("POST"))
             {
-                cmd.Parameters.AddWithValue("@RequestBody", body);
+                cmd.Parameters.AddWithValue("@RequestBody", parameters[5]);
             }
             else
             {
                 cmd.Parameters.AddWithValue("@RequestBody", "GET Method");
             }
-            cmd.Parameters.AddWithValue("@ResponseBody", responseBody);
-            cmd.Parameters.AddWithValue("@StatusCode", code);
+            cmd.Parameters.AddWithValue("@ResponseBody", parameters[6]);
+            cmd.Parameters.AddWithValue("@StatusCode", parameters[7]);
 
             cmd.ExecuteNonQuery();
             connection.Close();
