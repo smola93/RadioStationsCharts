@@ -17,7 +17,7 @@ namespace RadioStationsCharts.Controllers
 {
     [Route("register")]
     [ApiController]
-    [AllowGetResponseBody]
+
     public class ApiKeyController : ControllerBase
     {
         readonly DatabaseAccess db;
@@ -54,6 +54,7 @@ namespace RadioStationsCharts.Controllers
             }
             catch (Exception ex)
             {
+                HttpContext.Response.StatusCode = 400;
                 return "Error: " + ex.Message;
             }
         }

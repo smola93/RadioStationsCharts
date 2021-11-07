@@ -155,13 +155,9 @@ namespace RadioStationsCharts
                     body = await stream.ReadToEndAsync();
                 }
             }
-
             string code = response.StatusCode.ToString();
-            string responseBody;
-            using (StreamReader stream = new StreamReader(response.Body))
-            {
-                responseBody = await stream.ReadToEndAsync();
-            }
+            string responseBody = "";
+
 
             string[] parameters = { remoteIpAddress, method, headers, host, date, body, responseBody, code };
 
@@ -172,7 +168,7 @@ namespace RadioStationsCharts
             string connetionString = Configuration.GetSection("ConnectionStrings").GetSection("DBConnString").Value;
             connection = new SqlConnection(connetionString);
             connection.Open();
-            SqlCommand cmd = new SqlCommand("NazwaProckiDoLogowaniaDanych", connection);
+            SqlCommand cmd = new SqlCommand("LogCallDetails", connection);
             cmd.CommandType = CommandType.StoredProcedure;
 
             cmd.Parameters.AddWithValue("@IP", parameters[0]);
