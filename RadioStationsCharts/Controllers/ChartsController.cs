@@ -22,7 +22,8 @@ namespace RadioStationsCharts.Controllers
         }
         [HttpGet]
         [Route("rmf")]
-        public ChartsScraping GetRmfFmCharts() {
+        public ChartsScraping GetRmfFmCharts() 
+        {
             db.LogInDetailsToDatabaseAsync(HttpContext);
             ChartsScraping list = new ChartsScraping();
             list.Charts = new List<Charts>();

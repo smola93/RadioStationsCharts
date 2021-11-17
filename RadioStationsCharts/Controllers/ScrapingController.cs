@@ -356,16 +356,7 @@ namespace RadioStationsCharts.Controllers
             }
 
         }
-        //Do usuniecia?
-        private static async Task<string> CallUrl(string fullUrl)
-        {
-            HttpClient client = new HttpClient();
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13;
-            client.DefaultRequestHeaders.Accept.Clear();
-            var response = await client.GetAsync(fullUrl);
-            response.Content.Headers.ContentType.CharSet = @"ISO-8859-1";
-            var responseString = await response.Content.ReadAsStringAsync();
-            return responseString;
-        }
+
+        //Tu musi byc jeszcze metoda wysylajaca maila w wypadku bledu + porobione try/catche
     }
 }
