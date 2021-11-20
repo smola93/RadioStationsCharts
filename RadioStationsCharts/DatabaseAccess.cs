@@ -119,11 +119,11 @@ namespace RadioStationsCharts
                 throw;
             }
         }
-        public void LogInDetailsToDatabaseAsync(HttpContext context)
+        public void LogInDetailsToDatabaseAsync(HttpContext context, string responseMsg)
         {
             try
             {
-                var task = PrepareDataForLoggingToDbAsync(context);
+                var task = PrepareDataForLoggingToDbAsync(context, responseMsg);
                 string[] parameters = task.Result;
                 task.Wait();
                 ExecuteLoggingInToDb(parameters);
@@ -133,7 +133,7 @@ namespace RadioStationsCharts
                 throw;
             }
         }
-        private async Task<string[]> PrepareDataForLoggingToDbAsync(HttpContext context)
+        private async Task<string[]> PrepareDataForLoggingToDbAsync(HttpContext context, string responseMsg)
         {
             ConnectionInfo conn = context.Connection;
             HttpRequest request = context.Request;
@@ -156,7 +156,7 @@ namespace RadioStationsCharts
                 }
             }
             string code = response.StatusCode.ToString();
-            string responseBody = "";
+            string responseBody = responseMsg;
 
 
             string[] parameters = { remoteIpAddress, method, headers, host, date, body, responseBody, code };

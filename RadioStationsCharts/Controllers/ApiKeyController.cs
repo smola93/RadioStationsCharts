@@ -33,7 +33,7 @@ namespace RadioStationsCharts.Controllers
         {
             try
             {
-                db.LogInDetailsToDatabaseAsync(HttpContext);
+                //db.LogInDetailsToDatabaseAsync(HttpContext);
 
                 bool isValidEmail = IsValidEmail(request.Email);
 

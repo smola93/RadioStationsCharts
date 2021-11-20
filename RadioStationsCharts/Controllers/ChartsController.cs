@@ -21,131 +21,183 @@ namespace RadioStationsCharts.Controllers
             db = new DatabaseAccess(config);
         }
         [HttpGet]
+        [ProducesResponseType(200, Type = typeof(ChartsScraping))]
+        [ProducesResponseType(500, Type = typeof(string))]
         [Route("rmf")]
-        public ChartsScraping GetRmfFmCharts() 
+        public IActionResult GetRmfFmCharts()
         {
-            db.LogInDetailsToDatabaseAsync(HttpContext);
-            ChartsScraping list = new ChartsScraping();
-            list.Charts = new List<Charts>();
-            list.Station = "Rmf FM";
-            list.ChartsName = "POPlista";
-            DataTable charts = db.ExecProcedureToDatatable("GetRmfCharts");
-            
-            foreach (DataRow row in charts.Rows)
+            try
             {
-                Charts field = new Charts();
-                field.Position = Convert.ToInt32(row["Number"]);
-                field.Artist = row["Artist"].ToString();
-                field.Title = row["Title"].ToString();
-                list.Charts.Add(field);
+                ChartsScraping list = new ChartsScraping();
+                list.Charts = new List<Charts>();
+                list.Station = "Rmf FM";
+                list.ChartsName = "POPlista";
+                DataTable charts = db.ExecProcedureToDatatable("GetRmfCharts");
+
+                foreach (DataRow row in charts.Rows)
+                {
+                    Charts field = new Charts();
+                    field.Position = Convert.ToInt32(row["Number"]);
+                    field.Artist = row["Artist"].ToString();
+                    field.Title = row["Title"].ToString();
+                    list.Charts.Add(field);
+                }
+                return Ok(list);
             }
-            
-            return list;
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
         [HttpGet]
+        [ProducesResponseType(200, Type = typeof(ChartsScraping))]
+        [ProducesResponseType(500, Type = typeof(string))]
         [Route("eska")]
-        public ChartsScraping GetEskaCharts()
+        public IActionResult GetEskaCharts()
         {
-            ChartsScraping list = new ChartsScraping();
-            list.Charts = new List<Charts>();
-            list.Station = "Radio Eska";
-            list.ChartsName = "Gorąca 20";
-            DataTable charts = db.ExecProcedureToDatatable("GetEskaCharts");
-
-            foreach (DataRow row in charts.Rows)
+            try
             {
-                Charts field = new Charts();
-                field.Position = Convert.ToInt32(row["Number"]);
-                field.Artist = row["Artist"].ToString();
-                field.Title = row["Title"].ToString();
-                list.Charts.Add(field);
-            }
+                ChartsScraping list = new ChartsScraping();
+                list.Charts = new List<Charts>();
+                list.Station = "Radio Eska";
+                list.ChartsName = "Gorąca 20";
+                DataTable charts = db.ExecProcedureToDatatable("GetEskaCharts");
 
-            return list;
+                foreach (DataRow row in charts.Rows)
+                {
+                    Charts field = new Charts();
+                    field.Position = Convert.ToInt32(row["Number"]);
+                    field.Artist = row["Artist"].ToString();
+                    field.Title = row["Title"].ToString();
+                    list.Charts.Add(field);
+                }
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
         [HttpGet]
         [Route("radio-zet")]
-        public ChartsScraping GetRadioZetCharts()
+        [ProducesResponseType(200, Type = typeof(ChartsScraping))]
+        [ProducesResponseType(500, Type = typeof(string))]
+        public IActionResult GetRadioZetCharts()
         {
-            ChartsScraping list = new ChartsScraping();
-            list.Charts = new List<Charts>();
-            list.Station = "Radio Zet";
-            list.ChartsName = "Lista Przebojów Radia Zet";
-            DataTable charts = db.ExecProcedureToDatatable("GetRadioZetCharts");
-
-            foreach (DataRow row in charts.Rows)
+            try
             {
-                Charts field = new Charts();
-                field.Position = Convert.ToInt32(row["Number"]);
-                field.Artist = row["Artist"].ToString();
-                field.Title = row["Title"].ToString();
-                list.Charts.Add(field);
-            }
+                ChartsScraping list = new ChartsScraping();
+                list.Charts = new List<Charts>();
+                list.Station = "Radio Zet";
+                list.ChartsName = "Lista Przebojów Radia Zet";
+                DataTable charts = db.ExecProcedureToDatatable("GetRadioZetCharts");
 
-            return list;
+                foreach (DataRow row in charts.Rows)
+                {
+                    Charts field = new Charts();
+                    field.Position = Convert.ToInt32(row["Number"]);
+                    field.Artist = row["Artist"].ToString();
+                    field.Title = row["Title"].ToString();
+                    list.Charts.Add(field);
+                }
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
         [HttpGet]
+        [ProducesResponseType(200, Type = typeof(ChartsScraping))]
+        [ProducesResponseType(500, Type = typeof(string))]
         [Route("vox-fm")]
-        public ChartsScraping GetVoxFmCharts()
+        public IActionResult GetVoxFmCharts()
         {
-            ChartsScraping list = new ChartsScraping();
-            list.Charts = new List<Charts>();
-            list.Station = "VOX FM";
-            list.ChartsName = "Bestlista";
-            DataTable charts = db.ExecProcedureToDatatable("GetVoxFmCharts");
-
-            foreach (DataRow row in charts.Rows)
+            try
             {
-                Charts field = new Charts();
-                field.Position = Convert.ToInt32(row["Number"]);
-                field.Artist = row["Artist"].ToString();
-                field.Title = row["Title"].ToString();
-                list.Charts.Add(field);
-            }
+                ChartsScraping list = new ChartsScraping();
+                list.Charts = new List<Charts>();
+                list.Station = "VOX FM";
+                list.ChartsName = "Bestlista";
+                DataTable charts = db.ExecProcedureToDatatable("GetVoxFmCharts");
 
-            return list;
+                foreach (DataRow row in charts.Rows)
+                {
+                    Charts field = new Charts();
+                    field.Position = Convert.ToInt32(row["Number"]);
+                    field.Artist = row["Artist"].ToString();
+                    field.Title = row["Title"].ToString();
+                    list.Charts.Add(field);
+                }
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
         [HttpGet]
+        [ProducesResponseType(200, Type = typeof(ChartsScraping))]
+        [ProducesResponseType(500, Type = typeof(string))]
         [Route("polskie-radio-1")]
-        public ChartsScraping GetPolskieRadio1Charts()
+        public IActionResult GetPolskieRadio1Charts()
         {
-            ChartsScraping list = new ChartsScraping();
-            list.Charts = new List<Charts>();
-            list.Station = "Polskie Radio 1";
-            list.ChartsName = "Przeboje Przyjaciół Radiowej Jedynki";
-            DataTable charts = db.ExecProcedureToDatatable("GetPolskieRadio1Charts");
-
-            foreach (DataRow row in charts.Rows)
+            try
             {
-                Charts field = new Charts();
-                field.Position = Convert.ToInt32(row["Number"]);
-                field.Artist = row["Artist"].ToString();
-                field.Title = row["Title"].ToString();
-                list.Charts.Add(field);
-            }
+                ChartsScraping list = new ChartsScraping();
+                list.Charts = new List<Charts>();
+                list.Station = "Polskie Radio 1";
+                list.ChartsName = "Przeboje Przyjaciół Radiowej Jedynki";
+                DataTable charts = db.ExecProcedureToDatatable("GetPolskieRadio1Charts");
 
-            return list;
+                foreach (DataRow row in charts.Rows)
+                {
+                    Charts field = new Charts();
+                    field.Position = Convert.ToInt32(row["Number"]);
+                    field.Artist = row["Artist"].ToString();
+                    field.Title = row["Title"].ToString();
+                    list.Charts.Add(field);
+                }
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
         [HttpGet]
+        [ProducesResponseType(200, Type = typeof(ChartsScraping))]
+        [ProducesResponseType(500, Type = typeof(string))]
         [Route("trojka")]
-        public ChartsScraping GetTrojkaCharts()
+        public IActionResult GetTrojkaCharts()
         {
-            ChartsScraping list = new ChartsScraping();
-            list.Charts = new List<Charts>();
-            list.Station = "Trojka Polskie Radio";
-            list.ChartsName = "Lista Przebojów Programu 3";
-            DataTable charts = db.ExecProcedureToDatatable("GetTrojkaCharts");
-
-            foreach (DataRow row in charts.Rows)
+            try
             {
-                Charts field = new Charts();
-                field.Position = Convert.ToInt32(row["Number"]);
-                field.Artist = row["Artist"].ToString();
-                field.Title = row["Title"].ToString();
-                list.Charts.Add(field);
-            }
+                ChartsScraping list = new ChartsScraping();
+                list.Charts = new List<Charts>();
+                list.Station = "Trojka Polskie Radio";
+                list.ChartsName = "Lista Przebojów Programu 3";
+                DataTable charts = db.ExecProcedureToDatatable("GetTrojkaCharts");
 
-            return list;
+                foreach (DataRow row in charts.Rows)
+                {
+                    Charts field = new Charts();
+                    field.Position = Convert.ToInt32(row["Number"]);
+                    field.Artist = row["Artist"].ToString();
+                    field.Title = row["Title"].ToString();
+                    list.Charts.Add(field);
+                }
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
     }
 }

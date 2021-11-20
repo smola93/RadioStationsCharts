@@ -45,6 +45,8 @@ namespace RadioStationsCharts
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "RadioStationsCharts v1"));
             }
 
+            app.UseMiddleware<LoggingHandlingMiddleware>();
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
