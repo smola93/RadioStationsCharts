@@ -1,12 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using HtmlAgilityPack;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Net;
 using System.Text;
 using System.IO;
@@ -16,6 +11,7 @@ using System.Web;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using RadioStationsCharts.Attributes;
+using System.Net.Mail;
 
 namespace RadioStationsCharts.Controllers
 {
@@ -25,8 +21,10 @@ namespace RadioStationsCharts.Controllers
     public class ScrapingController : ControllerBase
     {
         readonly DatabaseAccess db;
+        private readonly IConfiguration Configuration;
         public ScrapingController(IConfiguration config)
         {
+            Configuration = config;
             db = new DatabaseAccess(config);
         }
 
@@ -50,10 +48,11 @@ namespace RadioStationsCharts.Controllers
             }
             catch (Exception ex)
             {
+                SendEmailWithScrapingError(ex.Message, "ScrapRmfFmCharts");
                 return "Error: " + ex.Message;
             }
         }
-        
+
         [HttpGet]
         [Route("scrap-eska")]
         public string ScrapEskaCharts()
@@ -74,6 +73,7 @@ namespace RadioStationsCharts.Controllers
             }
             catch (Exception ex)
             {
+                SendEmailWithScrapingError(ex.Message, "ScrapEskaCharts");
                 return "Error: " + ex.Message;
             }
         }
@@ -98,9 +98,11 @@ namespace RadioStationsCharts.Controllers
             }
             catch (Exception ex)
             {
+                SendEmailWithScrapingError(ex.Message, "ScrapRadioZetCharts");
                 return "Error: " + ex.Message;
             }
         }
+
         [HttpGet]
         [Route("scrap-vox-fm")]
         public string ScrapVoxFmCharts()
@@ -121,9 +123,11 @@ namespace RadioStationsCharts.Controllers
             }
             catch (Exception ex)
             {
+                SendEmailWithScrapingError(ex.Message, "ScrapVoxFmCharts");
                 return "Error: " + ex.Message;
             }
         }
+
         [HttpGet]
         [Route("scrap-polskie-radio-1")]
         public string ScrapPolskieRadio1Charts()
@@ -144,9 +148,11 @@ namespace RadioStationsCharts.Controllers
             }
             catch (Exception ex)
             {
+                SendEmailWithScrapingError(ex.Message, "ScrapPolskieRadio1Charts");
                 return "Error: " + ex.Message;
             }
         }
+
         [HttpGet]
         [Route("scrap-trojka")]
         public string ScrapTrojkaCharts()
@@ -167,6 +173,7 @@ namespace RadioStationsCharts.Controllers
             }
             catch (Exception ex)
             {
+                SendEmailWithScrapingError(ex.Message, "ScrapTrojkaCharts");
                 return "Error: " + ex.Message;
             }
         }
@@ -354,9 +361,27 @@ namespace RadioStationsCharts.Controllers
                 browser.Quit();
                 throw;
             }
-
         }
+        private void SendEmailWithScrapingError(string exceptionMessage, string methodName)
+        {
+            string emailPass = Configuration.GetSection("MailPass").Value;
+            string message = $"Error occurred in method: {methodName}: \n\n{exceptionMessage}";
+            try
+            {
+                var smtpClient = new SmtpClient("smtp.gmail.com")
+                {
+                    Port = 587,
+                    Credentials = new NetworkCredential("radiostationscharts@gmail.com", emailPass),
+                    EnableSsl = true,
+                };
 
-        //Tu musi byc jeszcze metoda wysylajaca maila w wypadku bledu + porobione try/catche
+                smtpClient.Send("radiostationscharts@gmail.com", Configuration.GetSection("MyEmail").Value, $"Error occured in {methodName} method!", message);
+            }
+            catch (SmtpException ex)
+            {
+                throw new ApplicationException
+                  ("SmtpException has occured: " + ex.Message);
+            }
+        }
     }
 }

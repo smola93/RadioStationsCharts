@@ -1,28 +1,25 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 using Microsoft.AspNetCore.Http;
 using System.IO;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace RadioStationsCharts
 {
     public class DatabaseAccess : IDatabaseAccess
     {
+        private readonly IConfiguration Configuration;
+        SqlConnection connection;
+
         public DatabaseAccess(IConfiguration config)
         {
             Configuration = config;
-            Connect();
+            TestConnection();
         }
         
-        private readonly IConfiguration Configuration;
-        SqlConnection connection;
-        public void Connect()
+        public void TestConnection()
         {
             try
             {
@@ -55,7 +52,6 @@ namespace RadioStationsCharts
                 throw;
             }
         }
-
         public DataTable ExecProcedureToDatatable(string procedure)
         {
             try

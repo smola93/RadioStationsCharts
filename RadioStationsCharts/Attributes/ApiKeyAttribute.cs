@@ -24,7 +24,6 @@ namespace RadioStationsCharts.Attributes
                 return;
             }
 
-            //var appSettings = context.HttpContext.RequestServices.GetRequiredService<IConfiguration>();
             DatabaseAccess db = new DatabaseAccess(context.HttpContext.RequestServices.GetRequiredService<IConfiguration>());
 
             var apiKey = db.CheckApiKeyInDatabase(extractedApiKey);

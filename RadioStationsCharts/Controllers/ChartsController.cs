@@ -1,11 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using RadioStationsCharts.Attributes;
 
 namespace RadioStationsCharts.Controllers
@@ -16,10 +13,12 @@ namespace RadioStationsCharts.Controllers
     public class ChartsController : ControllerBase
     {
         readonly DatabaseAccess db;
+
         public ChartsController(IConfiguration config)
         {
             db = new DatabaseAccess(config);
         }
+
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(ChartsScraping))]
         [ProducesResponseType(500, Type = typeof(string))]
@@ -49,6 +48,7 @@ namespace RadioStationsCharts.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(ChartsScraping))]
         [ProducesResponseType(500, Type = typeof(string))]
@@ -79,6 +79,7 @@ namespace RadioStationsCharts.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
         [HttpGet]
         [Route("radio-zet")]
         [ProducesResponseType(200, Type = typeof(ChartsScraping))]
@@ -109,6 +110,7 @@ namespace RadioStationsCharts.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(ChartsScraping))]
         [ProducesResponseType(500, Type = typeof(string))]
@@ -139,6 +141,7 @@ namespace RadioStationsCharts.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(ChartsScraping))]
         [ProducesResponseType(500, Type = typeof(string))]
@@ -169,6 +172,7 @@ namespace RadioStationsCharts.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(ChartsScraping))]
         [ProducesResponseType(500, Type = typeof(string))]

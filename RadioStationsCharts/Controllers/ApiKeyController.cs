@@ -1,17 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using RadioStationsCharts.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Threading.Tasks;
 using System.Net;
 using System.Net.Mail;
-using System.Net.Mime;
-using RadioStationsCharts.Attributes;
 
 namespace RadioStationsCharts.Controllers
 {
@@ -33,8 +27,6 @@ namespace RadioStationsCharts.Controllers
         {
             try
             {
-                //db.LogInDetailsToDatabaseAsync(HttpContext);
-
                 bool isValidEmail = IsValidEmail(request.Email);
 
                 if (isValidEmail)
