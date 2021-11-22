@@ -183,13 +183,13 @@ namespace RadioStationsCharts.Controllers
 
             WebClient client = new WebClient();
             MemoryStream ms = new MemoryStream(client.DownloadData(url));
-            
+
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
             HtmlDocument htmlDoc = new HtmlDocument();
             htmlDoc.Load(ms, Encoding.GetEncoding("ISO-8859-2"));
             var chartsNode = htmlDoc.DocumentNode.SelectNodes("//div[contains(@class, 'poplista-artist-title')]");
-            
+
             foreach (HtmlNode node in chartsNode)
             {
                 number++;
@@ -227,7 +227,7 @@ namespace RadioStationsCharts.Controllers
                 HtmlNodeCollection artistDetails = node.SelectNodes(".//li");
                 HtmlNodeCollection titleDetails = node.SelectNodes(".//a");
                 List<string> artists = new List<string>();
-     
+
                 if (titleDetails != null && artistDetails != null)
                 {
                     number++;
@@ -315,15 +315,15 @@ namespace RadioStationsCharts.Controllers
             };
             options.AddArguments(new List<string>() { "headless", "disable-gpu" });
             var browser = new ChromeDriver(options);
-            
+
             try
             {
                 browser.Navigate().GoToUrl(url);
 
                 IWebElement element = browser.FindElement(By.ClassName("select-button"));
                 IJavaScriptExecutor js = browser;
-                js.ExecuteScript("var evt = document.createEvent('MouseEvents');" + 
-                    "evt.initMouseEvent('click',true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0,null);" 
+                js.ExecuteScript("var evt = document.createEvent('MouseEvents');" +
+                    "evt.initMouseEvent('click',true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0,null);"
                     + "arguments[0].dispatchEvent(evt);", element);
 
                 var firstPositionArtist = browser.FindElementsByClassName("list-first-element__info-artist");
@@ -351,9 +351,9 @@ namespace RadioStationsCharts.Controllers
                         break;
                     }
                 }
-                
+
                 browser.Quit();
-                
+
                 return dt;
             }
             catch (Exception)

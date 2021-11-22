@@ -23,7 +23,7 @@ namespace RadioStationsCharts
             using (var responseBody = new MemoryStream())
             {
                 context.Response.Body = responseBody;
-                
+
                 await _next(context);
 
                 var response = await FormatResponse(context.Response);

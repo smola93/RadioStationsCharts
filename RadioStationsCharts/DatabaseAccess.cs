@@ -18,7 +18,7 @@ namespace RadioStationsCharts
             Configuration = config;
             TestConnection();
         }
-        
+
         public void TestConnection()
         {
             try
@@ -159,7 +159,7 @@ namespace RadioStationsCharts
 
             return parameters;
         }
-        private void ExecuteLoggingInToDb (string[] parameters)
+        private void ExecuteLoggingInToDb(string[] parameters)
         {
             string connetionString = Configuration.GetSection("ConnectionStrings").GetSection("DBConnString").Value;
             connection = new SqlConnection(connetionString);
