@@ -48,6 +48,7 @@ namespace RadioStationsCharts.Controllers
             }
             catch (Exception ex)
             {
+                HttpContext.Response.StatusCode = 500;
                 SendEmailWithScrapingError(ex.Message, "ScrapRmfFmCharts");
                 return "Error: " + ex.Message;
             }
@@ -73,6 +74,7 @@ namespace RadioStationsCharts.Controllers
             }
             catch (Exception ex)
             {
+                HttpContext.Response.StatusCode = 500;
                 SendEmailWithScrapingError(ex.Message, "ScrapEskaCharts");
                 return "Error: " + ex.Message;
             }
@@ -98,6 +100,7 @@ namespace RadioStationsCharts.Controllers
             }
             catch (Exception ex)
             {
+                HttpContext.Response.StatusCode = 500;
                 SendEmailWithScrapingError(ex.Message, "ScrapRadioZetCharts");
                 return "Error: " + ex.Message;
             }
@@ -123,6 +126,7 @@ namespace RadioStationsCharts.Controllers
             }
             catch (Exception ex)
             {
+                HttpContext.Response.StatusCode = 500;
                 SendEmailWithScrapingError(ex.Message, "ScrapVoxFmCharts");
                 return "Error: " + ex.Message;
             }
@@ -148,6 +152,7 @@ namespace RadioStationsCharts.Controllers
             }
             catch (Exception ex)
             {
+                HttpContext.Response.StatusCode = 500;
                 SendEmailWithScrapingError(ex.Message, "ScrapPolskieRadio1Charts");
                 return "Error: " + ex.Message;
             }
@@ -173,6 +178,7 @@ namespace RadioStationsCharts.Controllers
             }
             catch (Exception ex)
             {
+                HttpContext.Response.StatusCode = 500;
                 SendEmailWithScrapingError(ex.Message, "ScrapTrojkaCharts");
                 return "Error: " + ex.Message;
             }
@@ -193,14 +199,18 @@ namespace RadioStationsCharts.Controllers
             foreach (HtmlNode node in chartsNode)
             {
                 number++;
-                HtmlNodeCollection chartsDetails = node.SelectNodes(".//a");
+                HtmlNodeCollection artistDetails = node.SelectNodes(".//a");
+                HtmlNodeCollection titleDetails = node.SelectNodes(".//text()");
 
                 DataRow row = dt.NewRow();
-                row["Number"] = number;
-                row["Artist"] = chartsDetails[0].InnerText;
-                row["Title"] = chartsDetails[1].InnerText;
-                dt.Rows.Add(row);
-                if (number == 20)
+                row["Number"] = number - 1;
+                row["Artist"] = artistDetails[0].InnerText;
+                row["Title"] = titleDetails[titleDetails.Count - 1].InnerText;
+                if (number != 1)
+                {
+                    dt.Rows.Add(row);
+                }
+                if (number == 21)
                 {
                     break;
                 }
