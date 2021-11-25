@@ -81,9 +81,9 @@ namespace RadioStationsCharts.Controllers
         }
 
         [HttpGet]
-        [Route("radio-zet")]
         [ProducesResponseType(200, Type = typeof(ChartsScraping))]
         [ProducesResponseType(500, Type = typeof(string))]
+        [Route("radio-zet")]
         public IActionResult GetRadioZetCharts()
         {
             try

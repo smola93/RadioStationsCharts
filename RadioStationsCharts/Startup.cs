@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using RadioStationsCharts.Swagger;
 
 namespace RadioStationsCharts
 {
@@ -24,6 +25,7 @@ namespace RadioStationsCharts
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
+                c.OperationFilter<AuthorizationHeaderParameterOperationFilter>();
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "RadioStationsCharts", Version = "v1" });
             });
         }
