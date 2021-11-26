@@ -17,6 +17,7 @@ namespace RadioStationsCharts.Controllers
 {
     [Route("scraping")]
     [ApiController]
+    [ApiExplorerSettings(IgnoreApi = true)]
     [ApiKey]
     public class ScrapingController : ControllerBase
     {

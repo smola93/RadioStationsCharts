@@ -28,7 +28,7 @@ namespace RadioStationsCharts.Swagger
                 {
                     Name = "ApiKey",
                     In = ParameterLocation.Header,
-                    Description = "Provide your api key here which you have received on your email address through \"register\" method.",
+                    Description = "Provide your api key here which you have received on your email address after use \"register\" method.",
                     Required = true,
                     Schema = new OpenApiSchema
                     {

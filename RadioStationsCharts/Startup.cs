@@ -26,7 +26,18 @@ namespace RadioStationsCharts
             services.AddSwaggerGen(c =>
             {
                 c.OperationFilter<AuthorizationHeaderParameterOperationFilter>();
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "RadioStationsCharts", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { 
+                    Title = "RadioStationsCharts", 
+                    Version = "v1",
+                    Description = "An API which showing all major Polish radio stations charts, updated daily.\n\n" +
+                    "For use, first you have to register yourself through \"register\" method, then you need to provide key which you will get on your email address by \"ApiKey\" header.\n\n" +
+                    "For Registration, simply provide your username and email through the appropriate method.",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "RadioStationsCharts for any enquiries",
+                        Email = "radiostationscharts@gmail.com"
+                    }
+                });
             });
         }
 
@@ -37,7 +48,10 @@ namespace RadioStationsCharts
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "RadioStationsCharts v1"));
+                app.UseSwaggerUI(c => {
+                    c.DefaultModelsExpandDepth(-1);
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "RadioStationsCharts v1");
+                });
             }
 
             app.UseMiddleware<LoggingHandlingMiddleware>();
